@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Angular PayPal Button</title>
+    <meta name="description" content="Unicorns.">
+<link rel="stylesheet" href="https://bootswatch.com/cosmo/bootstrap.min.css" crossorigin="anonymous">
+<style>h1, h2, h3, h4, h5 { color: #5c5c5c; }</style>
+  </head>
+  <body class="container" ng-app="test-app" ng-controller="TestCtrl">
+    <h1>Angular PayPal Button<h1>
+        <hr>
+
+        <h2>About</h2>
+
+        <p>Due to being heavily dependant on return URLs and originally being constructed to be used strictly with redirects, PayPal can prove to be quite a challenge to implement as a part of a single-page web app. PayPal has since released a piece of JavaScript for their In-Context Checkout, checkout.js, which allows users to make their purchases without leaving the merchant's website.</p>
+
+        <p>This project aims to wrap the script, make it easy to use in Angular and allow the use of callbacks, as opposed to redirects, which I believe makes for a much more straightforward developement. This was achieved using an undocumented feature of checkout.js, fixing some bugs related to it and hacking it to allow for the button to be reloaded without refreshing the whole page.</p>
+
+        <p>Having more than one buttons displayed at the same time is not currently supported and may lead to undefined behavior.</p>
+
+        <h2>Live Demonstration</h2>
+
+    <div id="buttonDiv">
+    <paypal-button url="paypalUrl()" return="onReturn(args)" cancel="onCancel(args)"
+                   color="blue" size="medium" shape="rect"></paypal-button>
+    </div>
+    <pre ng-if="afterPurchase"><code>{{ afterPurchaseMsg }}</code></pre>
+    <button ng-click="reloadButton()">Reload</button>
+
+    <h2>Installation</h2>
+    <p>This project can be installed using bower.</p>
+    <pre><code>bower install angular-paypal-button</code></pre>
+
+        <h2>Usage</h2>
+
+        <p>You first need to configure angular-paypal-button with your Merchant ID and the environment (sandbox or production) in your application's config.</p>
+        <pre><code>angular.module('test-app', ['dsl-paypal-button']).
+config(function (PaypalButtonConfigProvider) {
+  PaypalButtonConfigProvider.setMerchantId('6XF3MPZBZV6HU');
+  PaypalButtonConfigProvider.setEnvironment('sandbox');
+});</code></pre>
+
+        <p>You can then proceed onto generating the above button as follows:</p>
+<pre><code>&lt;paypal-button url=&quot;paypalUrl()&quot; return=&quot;onReturn(args)&quot; cancel=&quot;onCancel(args)&quot;
+               color=&quot;blue&quot; size=&quot;medium&quot; shape=&quot;rect&quot;&gt;&lt;/paypal-button&gt;</code></pre>
+
+<p>The first argument returns a promise returning either the PayPal transaction token, or a URL containing it. This is typically generated on your server using PayPal's REST-ful API. You also need to return the return and cancel URLs as send to PayPal by your server, as not even the PayPal script has any idea which is which.</p>
+<p>A server provided by PayPal was used for this demonstration, following their own <a href="http://plnkr.co/edit/2GGEyNEFUPCZ7jIIGk9X?p=preview">example</a>. This can be implemented in Angular as follows:</p>
+<pre><code>$scope.paypalUrl = function () {
+  var q = $q.defer();
+
+  $http.get('http://166.78.8.98/cgi-bin/aries.cgi', {
+     params: {
+       sandbox: 1,
+       direct: 1,
+       returnurl: 'http://166.78.8.98/cgi-bin/return.htm',
+       cancelurl: 'http://166.78.8.98/cgi-bin/cancel.htm',
+       ajax: 1,
+       onlytoken: 1
+     }
+   }).
+   then(function (response) {
+     q.resolve({
+       redirectUrl: response.data,
+       returnUrl: 'http://166.78.8.98/cgi-bin/return.htm',
+       cancelUrl: 'http://166.78.8.98/cgi-bin/cancel.htm',
+     });
+   }).catch(function () {
+     q.reject();
+   });
+
+ return q.promise;
+};</code></pre>
+
+
+<p>The callback functions passed in the 'return' and 'cancel' arguments are to be used in place of the traditional return URLs. Please keep in mind that especially on small mobile devices the browser may still be redirected to PayPal and as a result your user could find themselves on the original return URL upon completing/canceling their purchase. This is not handled in the above example.<p>
+
+<p>The function specified in the 'return' argument is called when the user successfully logs in and confirms their purchase. The function specified in the 'cancel' argument is called when the user cancels their purchase. Both functions are passed an 'args' hash containing the token and a payerId in the case of a successfull purchase (return).</p>
+
+<p>The button dissappears when the purchase is either completed or canceled since the PayPal script is designed to redirect the user away from the current page at this point and as such using it more than once might lead to undefined behavior.</p>
+
+<p>In the above demonstration a simple message is displayed in place of the button; in reality you'd want to send the data to your server and complete the payment.</p>
+
+<pre><code>$scope.onReturn = function (args) {
+  $scope.afterPurchase = true;
+  $scope.afterPurchaseMsg = 'The item was successfully purchased.\n'; +
+      'token: ' + args.token + ', payerId: ' + args.payerId;
+};
+
+$scope.onCancel = function (args) {
+  $scope.afterPurchase = true;
+  $scope.afterPurchaseMsg = 'The purchase was canceled.\n' +
+     'token: ' + args.token;
+};</code></pre>
+<p>The last three arguments related to the button's appearance are to be used in accordance with <a href="https://developer.paypal.com/docs/classic/express-checkout/in-context/integration/#paypal-button-brand-guidelines">PayPal's official documentation</a>.</p>
+<h2>License</h2>
+<p>Copyright &copy; 2016 Daniel Shihoon Lee</p>
+<p>You can use this project under the terms and conditions of the 2-clause BSD license included with the distribution. This project includes checkout.js by PayPal, Inc. licensed under the Apache License version 2.0; all of my modifications to it are released under the terms of the 2-clause BSD license.</p>
+
+<p>PayPal is a registered trademark of PayPal, Inc. The PayPal logo is a trademark of PayPal, Inc. Other trademarks and brands are the property of their respective owners.</p>
+
+<a href="https://github.com/danielslee/angular-paypal-button"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="dist/paypal-button.js"></script>
+    <script>
+angular.module('test-app', ['dsl-paypal-button']).
+config(function (PaypalButtonConfigProvider) {
+  PaypalButtonConfigProvider.setMerchantId('6XF3MPZBZV6HU');
+  PaypalButtonConfigProvider.setEnvironment('sandbox');
+}).
+controller('TestCtrl', function ($scope, $http, $q, $compile) {
+  $scope.afterPurchase = false;
+  $scope.paypalUrl = function () {
+    var q = $q.defer();
+
+    $http.get('http://166.78.8.98/cgi-bin/aries.cgi', {
+        params: {
+          sandbox: 1,
+          direct: 1,
+          returnurl: 'http://166.78.8.98/cgi-bin/return.htm',
+          cancelurl: 'http://166.78.8.98/cgi-bin/cancel.htm',
+          ajax: 1,
+          onlytoken: 1
+        }
+      }).
+    then(function (response) {
+      q.resolve({
+        redirectUrl: response.data,
+        returnUrl: 'http://166.78.8.98/cgi-bin/return.htm',
+        cancelUrl: 'http://166.78.8.98/cgi-bin/cancel.htm',
+      });
+    }).catch(function () {
+      q.reject();
+    });
+
+    return q.promise;
+  };
+
+  $scope.onReturn = function (args) {
+    $scope.afterPurchase = true;
+    $scope.afterPurchaseMsg = 'The item was successfully purchased.\n' +
+        'token: ' + args.token + ', payerId: ' + args.payerId;
+  };
+
+  $scope.onCancel = function (args) {
+    $scope.afterPurchase = true;
+    $scope.afterPurchaseMsg = 'The purchase was canceled.\n' +
+      'token: ' + args.token;
+  };
+
+  $scope.reloadButton = function () {
+    var button = angular.element(document.querySelector('#buttonDiv'));
+    button.empty();
+    var newButton =
+      angular.element(
+          '<paypal-button url="paypalUrl()" return="onReturn(args)" ' +
+          'cancel="onCancel(args)" color="blue" size="medium" shape="rect" />');
+    $compile(newButton)($scope);
+    angular.element(document.querySelector('#buttonDiv')).append(newButton);
+
+    $scope.afterPurchase = false;
+  };
+})
+    </script>
+  </body>
+</html>

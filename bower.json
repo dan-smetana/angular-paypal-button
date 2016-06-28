@@ -1,0 +1,23 @@
+{
+  "name": "angular-paypal-button",
+  "authors": [
+    "Daniel Shihoon Lee <daniel@shihoonlee.com>"
+  ],
+  "description": "This project aims to wrap checkout.js by PayPal, make it easy to use in Angular and allow the use of callbacks, as opposed to redirects.",
+  "main": "dist/paypal-button.js",
+  "license": "BSD2",
+  "homepage": "http://danielslee.github.io/angular-paypal-button",
+  "ignore": [
+    ".gitignore",
+    "src",
+    "index.html",
+    "README.md",
+    "package.json",
+    "gulpfile.js",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "*"
+  }
+}
