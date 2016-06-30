@@ -16,8 +16,7 @@ bower install angular-paypal-button
 ```
 
 ## Live Demonstration
-You can check out a live demo on [the project
-site](http://danielslee.github.io/angular-paypal-button).
+You can play with a live example on [Plunker](http://plnkr.co/edit/10J5le82GJQMI5hUhNyA?p=preview).
 
 ## Usage
 You first need to configure angular-paypal-button with your Merchant ID and the environment (sandbox or production) in your application's config.

@@ -21,14 +21,16 @@
         <p>Having more than one buttons displayed at the same time is not currently supported and may lead to undefined behavior.</p>
 
         <h2>Live Demonstration</h2>
+        <p>You can play with a live example on <a href="http://plnkr.co/edit/10J5le82GJQMI5hUhNyA?p=preview)">Plunker</a>.
 
+        <!--
     <div id="buttonDiv">
     <paypal-button url="paypalUrl()" return="onReturn(args)" cancel="onCancel(args)"
                    color="blue" size="medium" shape="rect"></paypal-button>
     </div>
     <pre ng-if="afterPurchase"><code>{{ afterPurchaseMsg }}</code></pre>
     <button ng-click="reloadButton()">Reload</button>
-
+    -->
     <h2>Installation</h2>
     <p>This project can be installed using bower.</p>
     <pre><code>bower install angular-paypal-button</code></pre>
@@ -102,8 +104,8 @@ $scope.onCancel = function (args) {
 <p>PayPal is a registered trademark of PayPal, Inc. The PayPal logo is a trademark of PayPal, Inc. Other trademarks and brands are the property of their respective owners.</p>
 
 <a href="https://github.com/danielslee/angular-paypal-button"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+<!--
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="dist/paypal-button.js"></script>
     <script>
 angular.module('test-app', ['dsl-paypal-button']).
@@ -165,5 +167,6 @@ controller('TestCtrl', function ($scope, $http, $q, $compile) {
   };
 })
     </script>
+    -->
   </body>
 </html>
